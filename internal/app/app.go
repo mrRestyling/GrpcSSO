@@ -1,7 +1,9 @@
 package app
 
 import (
-	"exT/internal/app/grpcapp"
+	grpcapp "exT/internal/app/grpcapp"
+	"exT/internal/services/auth"
+	"exT/internal/storage/sqlite"
 	"log/slog"
 	"time"
 )
@@ -12,15 +14,17 @@ type App struct {
 
 func New(log *slog.Logger, grpcPort int, storagePath string, tokenTTL time.Duration) *App {
 
-	// инициализировать хранилище (storage)
+	// Инициализация хранилища
+	storage, err := sqlite.New(storagePath)
 
-	// инициализировать auth service (сервисный слой)
+	if err != nil {
+		panic(err)
+	}
 
-	//
+	// инициализация auth service (сервисный слой)
+	authService := auth.New(log, storage, storage, storage, tokenTTL)
 
-	// authService := auth.New(log, storage, storage, storage, tokenTTL)
-
-	grpcApp := grpcapp.New(log, grpcPort)
+	grpcApp := grpcapp.New(log, authService, grpcPort)
 
 	return &App{
 		GRPCSrv: grpcApp,

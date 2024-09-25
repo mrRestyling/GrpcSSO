@@ -16,15 +16,13 @@ const (
 )
 
 func main() {
-	// инициализировать объект конфига...
 
+	// Запуск go run cmd/sso/main.go --config=./config/local.yaml
+
+	// Инициализация объекта конфига...
 	cfg := config.MustLoad()
 
-	// // go run cmd/sso/main.go --config=./config/local.yaml
-	// fmt.Println("config:", cfg)
-
-	// инициализировать логгер..
-
+	// Инициализация логгера
 	log := setupLogger(cfg.Env)
 
 	log.Info("starting application",
@@ -39,12 +37,10 @@ func main() {
 
 	log.Warn("warn message")
 
-	// инициализировать приложение...(app)
-
-	// запустить gRPC-сервер приложения
-
+	// Инициализация приложения
 	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
 
+	// Запуск gRPC-сервера в отдельной горутине
 	go application.GRPCSrv.MustRun()
 
 	// GF<-

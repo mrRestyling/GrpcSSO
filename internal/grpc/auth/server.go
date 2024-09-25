@@ -87,7 +87,11 @@ func (s *ServerAPI) IsAdminS(ctx context.Context, req *ssov1.IsAdminRequest) (*s
 
 	admin, err := s.auth.IsAdmin(ctx, req.UserId)
 	if err != nil {
-		// todo
+
+		if errors.Is(err, storage.ErrUserNotFound) {
+			return nil, status.Error(codes.NotFound, "user already exists")
+		}
+
 		return nil, status.Error(codes.Internal, "internal error")
 	}
 

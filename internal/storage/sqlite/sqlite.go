@@ -10,7 +10,7 @@ import (
 	"log"
 
 	"github.com/mattn/go-sqlite3"
-	_ "github.com/mattn/go-sqlite3"
+	// _ "github.com/mattn/go-sqlite3"
 )
 
 type Storage struct {
@@ -18,12 +18,11 @@ type Storage struct {
 }
 
 // Конструктор Storage
-
 func New(storagePath string) (*Storage, error) {
 
 	const op = "storage.sqlite.New"
 
-	db, err := sql.Open("sqlite", storagePath)
+	db, err := sql.Open("sqlite3", storagePath)
 	if err != nil {
 		log.Println("no connect to DB")
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -100,7 +99,7 @@ func (s *Storage) User(ctx context.Context, email string) (models.User, error) {
 	return user, nil
 }
 
-func (s *Storage) UserAdmin(ctx context.Context, userID string) (bool, error) {
+func (s *Storage) IsAdminS(ctx context.Context, userID int64) (bool, error) {
 
 	const op = "storage.sqlite.UserAdmin"
 
@@ -124,4 +123,27 @@ func (s *Storage) UserAdmin(ctx context.Context, userID string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (s *Storage) App(ctx context.Context, appID int) (models.App, error) {
+	const op = "storage.sqlite.App"
+
+	smtp, err := s.db.Prepare("SELECT id, name, secret FROM apps WHERE id = ?")
+	if err != nil {
+		return models.App{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	row := smtp.QueryRowContext(ctx, appID)
+
+	var app models.App
+
+	err = row.Scan(&app.ID, &app.Name, &app.Secret)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.App{}, fmt.Errorf("%s: %w", op, storage.ErrAppNotFound)
+		}
+		return models.App{}, fmt.Errorf("%s: %w", op, err)
+
+	}
+	return app, nil
 }

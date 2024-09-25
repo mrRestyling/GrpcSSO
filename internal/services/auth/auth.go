@@ -39,7 +39,7 @@ type AppProvider interface {
 }
 
 // New returns a new instance of the Auth service
-func New(log *slog.Logger, userSaver UserSaver, userProvider UserProvider, appProvider AppProvider) *Auth {
+func New(log *slog.Logger, userSaver UserSaver, userProvider UserProvider, appProvider AppProvider, tokenTTL time.Duration) *Auth {
 	return &Auth{
 		log:         log,
 		usrSaver:    userSaver,
@@ -93,7 +93,6 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appId i
 	}
 
 	return token, nil
-
 }
 
 func (a *Auth) RegisterNewUser(ctx context.Context, email string, password string) (int64, error) {
@@ -126,7 +125,6 @@ func (a *Auth) RegisterNewUser(ctx context.Context, email string, password strin
 	log.Info("user registered", slog.Int64("user_id", id))
 
 	return id, nil
-
 }
 
 // IsAdmin проверяет, является ли пользователь админом
@@ -153,5 +151,4 @@ func (a *Auth) IsAdmin(ctx context.Context, userId int64) (bool, error) {
 	log.Info("checked if user is admin", slog.Bool("is_admin", IsAdmin))
 
 	return IsAdmin, nil
-
 }
