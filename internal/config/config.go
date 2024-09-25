@@ -22,22 +22,26 @@ type GRPCConfig struct {
 
 // go get github.com/ilyakaznacheev/cleanenv
 
-// Не возвращает ошибку
-// при невалидном конфиге
+// Получаем путь из флага или из env
 func MustLoad() *Config {
 	path := fetchConfigPath()
 	if path == "" {
 		panic("no config path provided")
 	}
 
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		panic("config file does not exist" + path)
+	return MustLoadByPath(path)
+}
+
+// Вызываем напрямую из тестов
+func MustLoadByPath(configPath string) *Config {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		panic("config file does not exist" + configPath)
 	}
 
 	var cfg Config
 
-	if err := cleanenv.ReadConfig(path, &cfg); err != nil {
-		panic("failed to read config file: " + err.Error())
+	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
+		panic("cannot read config: " + err.Error())
 	}
 
 	return &cfg
