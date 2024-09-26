@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"exT/internal/services/auth"
-	"exT/internal/storage"
 
 	ssov1 "github.com/mrRestyling/protos/proto/sso"
 	"google.golang.org/grpc"
@@ -46,7 +45,7 @@ func (s *ServerAPI) Login(ctx context.Context, req *ssov1.LoginRequest) (*ssov1.
 	if err != nil {
 		// обработка ошибки
 		if errors.Is(err, auth.ErrInvalidCredentials) {
-			return nil, status.Error(codes.InvalidArgument, "internal error")
+			return nil, status.Error(codes.InvalidArgument, "invalid email or password")
 		}
 
 		return nil, status.Error(codes.Internal, "internal error")
@@ -67,7 +66,7 @@ func (s *ServerAPI) Register(ctx context.Context, req *ssov1.RegisterRequest) (*
 	if err != nil {
 		// обрабатываем случаи ошибки
 
-		if errors.Is(err, storage.ErrUserExists) {
+		if errors.Is(err, auth.ErrUserExists) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
 
@@ -88,7 +87,7 @@ func (s *ServerAPI) IsAdminS(ctx context.Context, req *ssov1.IsAdminRequest) (*s
 	admin, err := s.auth.IsAdmin(ctx, req.UserId)
 	if err != nil {
 
-		if errors.Is(err, storage.ErrUserNotFound) {
+		if errors.Is(err, auth.ErrUserNotFound) {
 			return nil, status.Error(codes.NotFound, "user already exists")
 		}
 

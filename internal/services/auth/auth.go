@@ -15,6 +15,9 @@ import (
 
 var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrUserExists         = errors.New("user already exists")
+	ErrInvalidAppId       = errors.New("invalid app id")
 )
 
 type Auth struct {
