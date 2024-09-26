@@ -3,6 +3,7 @@ package tests
 import (
 	"exT/tests/suite"
 	"testing"
+	"time"
 
 	"github.com/brianvoe/gofakeit"
 	"github.com/golang-jwt/jwt/v5"
@@ -69,6 +70,11 @@ func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 	assert.Equal(t, appID, int(claims["app_id"].(float64)))
 
 	// Проверяем, что время истечения токена совпадает с ожидаемым
+
+	loginTime := time.Unix(int64(claims["exp"].(float64)), 0)
+	const deltaSeconds = 3600 // точность
+
+	assert.InDelta(t, loginTime.Add(st.Cfg.TokenTTL).Unix(), claims["exp"].(float64), deltaSeconds)
 
 }
 

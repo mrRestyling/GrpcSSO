@@ -18,8 +18,8 @@ func NewToken(user models.User, app models.App, duration time.Duration) (string,
 
 	claims["uid"] = user.ID
 	claims["email"] = user.Email
-	claims["app_id"] = app.ID
 	claims["exp"] = time.Now().Add(duration).Unix()
+	claims["app_id"] = app.ID
 
 	// подписываем свой токен
 	tokenString, err := token.SignedString([]byte(app.Secret))
