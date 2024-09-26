@@ -70,7 +70,7 @@ func (s *ServerAPI) Register(ctx context.Context, req *ssov1.RegisterRequest) (*
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
 		}
 
-		return nil, status.Error(codes.Internal, "invalid user or internal error")
+		return nil, status.Error(codes.Internal, "user already exists")
 	}
 
 	return &ssov1.RegisterResponse{
