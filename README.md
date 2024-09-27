@@ -2,8 +2,9 @@ TODO
 
 
 Дополнительные пакеты:
+- github.com/mrRestyling/protos (прото модуль с гитхаба)
 - go get golang.org/x/crypto (токены)
-- go get github.com/golang-migrate/migrate/v4 ( для миграции бд )
+- go get github.com/golang-migrate/migrate/v4 (для миграции бд)
 - go get github.com/mattn/go-sqlite3 (драйвер sqlite3)
 - go get github.com/brianvoe/gofakeit/v6 (генерация данных для тестов)
 - go get github.com/stretchr/testify (пакет testify)
